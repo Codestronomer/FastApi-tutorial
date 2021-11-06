@@ -65,8 +65,25 @@ def delete_post(id: int):
     # Find the index in the array of the required ID
 
     index = [i for i, p in enumerate(my_posts) if p['id'] == id]
+    
     if not index:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"post with id: {id} does not exist")
+    
     my_posts.pop(index[0])
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@app.put("/posts/{id}")
+def update_post(id: int, post: Post):
+    
+    index = [i for i, p in enumerate(my_posts) if p['id'] == id]
+
+    if not index:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"post with id: {id} does not exist")
+
+    post_dict = post.dict()
+    post_dict['id'] = id
+    my_posts[index[0]] = post_dict
+    return {"Message": "updated post"}
