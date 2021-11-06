@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from random import randrange
 import psycopg2
 import time
-from os import environ
+import os
 from psycopg2.extras import RealDictCursor
 from starlette.status import HTTP_201_CREATED
 
@@ -18,6 +18,8 @@ class Post(BaseModel):
     published: bool = True
     rating: Optional[int] = None
 
+user = os.getenv('USER')
+password = os.getenv('PASSWORD')
 
 while True:
 
@@ -25,8 +27,8 @@ while True:
         conn = psycopg2.connect(
             host='localhost', 
             database='fastapi-tut', 
-            user='', 
-            password='',
+            user=user, 
+            password=password,
             cursor_factory=RealDictCursor
         )
         cursor = conn.cursor()
