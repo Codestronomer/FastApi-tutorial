@@ -8,6 +8,13 @@ import time
 import os
 from psycopg2.extras import RealDictCursor
 from starlette.status import HTTP_201_CREATED
+from . import models
+from sqlalchemy.orm import Session
+from fastapi import Depends
+from .db import engine, get_db
+
+models.Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI()
 
@@ -16,7 +23,8 @@ class Post(BaseModel):
     title: str
     content: str
     published: bool = True
-    rating: Optional[int] = None
+
+
 
 user = os.getenv('USER')
 password = os.getenv('PASSWORD')
@@ -27,8 +35,8 @@ while True:
         conn = psycopg2.connect(
             host='localhost', 
             database='fastapi-tut', 
-            user=user, 
-            password=password,
+            user=f'{user}', 
+            password=f'{password}',
             cursor_factory=RealDictCursor
         )
         cursor = conn.cursor()
@@ -41,27 +49,17 @@ while True:
         time.sleep(10.0)
 
 
-
-
-my_posts = [{
-        "title": "title of post 1", 
-        "content": "content of post 1",
-        "id": 1,
-        "published": True,
-        "rating": 5
-    },
-    {
-        "title": "Favorite foods", 
-        "content": "My favorite food is semo",
-        "id": 2,
-        "published": True,
-        "rating": 4
-    }]
-
-
 @app.get("/")
 async def root():
     return {"message": "Hello World!"}
+
+
+@app.get("/sqlalchemy")
+def test_posts(db: Session = Depends(get_db)):
+
+    posts = db.query(models.Post).all()
+    return {'data':posts }
+
 
 
 @app.get("/posts")
@@ -70,6 +68,7 @@ def get_posts():
     posts = cursor.fetchall()
     
     return {"data": posts}
+
 
 
 @app.post("/posts", status_code=HTTP_201_CREATED)
@@ -123,3 +122,18 @@ def update_post(id: int, post: Post):
                             detail=f"post with id: {id} does not exist")
 
     return {"Message": updated_post}
+
+
+# my_posts = [{
+#         "title": "title of post 1", 
+#         "content": "content of post 1",
+#         "id": 1,
+#         "published": True,
+#         "rating": 5
+#     },
+#     {
+#         "title": "Favorite foods", 
+#         "content": "My favorite food is semo",
+#         "id": 2,
+#         "published": True,
+#         "rating": 4
