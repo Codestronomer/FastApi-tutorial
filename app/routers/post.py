@@ -1,5 +1,5 @@
 
-from .. import schemas, models
+from .. import schemas, models, oauth2
 from ..db import get_db
 from fastapi import Response, status, HTTPException, Depends, APIRouter
 from typing import List
@@ -24,7 +24,7 @@ def get_posts(db: Session = Depends(get_db)):
 
 
 @router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
-def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
+def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
 
     # cursor.execute(
     #     """INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING * """,
@@ -32,6 +32,7 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
     # )
     # new_post = cursor.fetchone()
     # conn.commit()
+    print(current_user.email)
 
     new_post = models.Post(**post.dict())
 
@@ -56,7 +57,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, db: Session = Depends(get_db)):
+def delete_post(id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     # deleting post
 
     # cursor.execute("""DELETE FROM posts WHERE id = %s RETURNING * """, (str(id)))
@@ -76,7 +77,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/posts/{id}", response_model=schemas.Post)
-def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db)):
+def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     
     # cursor.execute(
     #     """UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""",
