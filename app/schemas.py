@@ -19,22 +19,9 @@ class PostUpdate(PostBase):
     pass
 
 
-class Post(PostBase):
-    id: int
-    created: datetime
-
-    class Config:
-        orm_mode = True
-
-
 class UserBase(BaseModel):
     username: str
     email: EmailStr
-
-
-
-class UserCreate(UserBase):
-    password: str
 
 
 class UserOut(UserBase):
@@ -42,6 +29,24 @@ class UserOut(UserBase):
 
     class Config:
         orm_mode = True
+
+class Post(PostBase):
+    id: int
+    created: datetime
+    owner_id: int
+    owner: UserOut
+
+    class Config:
+        orm_mode = True
+
+
+
+
+
+class UserCreate(UserBase):
+    password: str
+
+
 
 
 class UserLogin(BaseModel):
