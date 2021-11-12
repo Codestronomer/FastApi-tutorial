@@ -1,5 +1,6 @@
 
 from .. import schemas, models, oauth2
+from typing import Optional
 from ..db import get_db
 from fastapi import Response, status, HTTPException, Depends, APIRouter
 from typing import List
@@ -12,9 +13,9 @@ router = APIRouter(
 
 
 @router.get("/posts", response_model=List[schemas.Post])
-def get_posts(db: Session = Depends(get_db)):
+def get_posts(db: Session = Depends(get_db), limit: int = 10, skip: int = 0, search: Optional[str] = None):
 
-    posts = db.query(models.Post).all()
+    posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
     # cursor.execute("""SELECT * FROM posts;""")
     # posts = cursor.fetchall()

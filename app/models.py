@@ -32,3 +32,6 @@ class User(Base):
     password = Column(String, nullable=False)
     created = Column(TIMESTAMP, server_default=text('NOW()'), nullable=False)
 
+
+
+
