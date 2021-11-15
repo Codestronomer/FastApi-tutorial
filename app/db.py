@@ -2,13 +2,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from psycopg2.extras import RealDictCursor
 from sqlalchemy import create_engine
+from .config import settings
 # import psycopg2
 # import time
-import os
+# import os
 
-user = os.getenv('USER')
-password = os.getenv('PASSWORD')
-SQLALCHEMY_DATABASE_URL = f'postgresql://{user}:{password}@localhost/fastapi-tut'
+SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.db_username}:{settings.db_password}@{settings.db_hostname}/{settings.db_name}'
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

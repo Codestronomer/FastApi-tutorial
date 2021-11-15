@@ -1,8 +1,8 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from datetime import datetime
-
 from pydantic.networks import EmailStr
+from pydantic.types import conint
 
 
 class PostBase(BaseModel):
@@ -20,7 +20,6 @@ class PostUpdate(PostBase):
 
 
 class UserBase(BaseModel):
-    username: str
     email: EmailStr
 
 
@@ -38,6 +37,34 @@ class Post(PostBase):
 
     class Config:
         orm_mode = True
+
+
+class PostOut(BaseModel):
+    Post: Post
+    votes: int
+
+    class Config:
+        orm_mode = True
+
+
+
+# data = {
+#         "Post": {
+#             "title": "post2",
+#             "content": " di vo job wdbon dbos",
+#             "created": "2021-11-10T18:55:10.455945+00:00",
+#             "published": True,
+#             "id": 4,
+#             "owner_id": 11
+#         },
+#         "votes": 2
+#     }
+
+# try:
+#     PostOut(**data)
+# except ValidationError as e:
+#     print(e.json())
+
 
 
 
@@ -61,3 +88,8 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
+
+
+class Vote(BaseModel):
+    post_id: int
+    dir: conint(le=1)

@@ -20,7 +20,7 @@ class Post(Base):
                     )
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"),  nullable=False)
 
-    owner = relationship("User")
+    owner = relationship("User", primaryjoin="Post.owner_id == User.id")
 
 class User(Base):
 
@@ -33,5 +33,9 @@ class User(Base):
     created = Column(TIMESTAMP, server_default=text('NOW()'), nullable=False)
 
 
+class Votes(Base):
 
-
+    __tablename__ = "votes"
+    
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)
+    post_id = Column(Integer, ForeignKey('posts.id', ondelete="CASCADE"), primary_key=True)

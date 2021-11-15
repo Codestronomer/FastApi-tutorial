@@ -8,16 +8,17 @@ from .db import get_db
 from . import schemas, models
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
+from .config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 # SECRET_KEY
-SECRET_KEY = os.getenv('OAUTH2_SECRETKEY')
+SECRET_KEY = f"{settings.secret_key}"
 
 # Algorithm
-ALGORITHM = "HS256"
+ALGORITHM = 'HS256'
 
 # Expiration
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 def create_access_token(data: dict):
     to_encode = data.copy()
