@@ -20,6 +20,7 @@ class PostUpdate(PostBase):
 
 
 class UserBase(BaseModel):
+    username: str
     email: EmailStr
 
 
