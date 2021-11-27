@@ -39,3 +39,13 @@ class Votes(Base):
     
     user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)
     post_id = Column(Integer, ForeignKey('posts.id', ondelete="CASCADE"), primary_key=True)
+
+
+class Comment(Base):
+
+    __tablename__ = "comments"
+
+    post_id = Column(Integer, ForeignKey('posts.id', ondelete="CASCADE"), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)
+    content = Column(String, nullable=False)
+    created = Column(TIMESTAMP, server_default=text('NOW()'), nullable=False)
