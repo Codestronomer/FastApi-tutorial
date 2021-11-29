@@ -30,6 +30,20 @@ class UserOut(UserBase):
     class Config:
         orm_mode = True
 
+
+class CommentCreate(BaseModel):
+    content: str
+    post_id: int
+
+class Comment(BaseModel):
+    post_id: int
+    content: str
+    created: datetime
+
+    class Config:
+        orm_mode = True
+        
+
 class Post(PostBase):
     id: int
     created: datetime
@@ -43,6 +57,7 @@ class Post(PostBase):
 class PostOut(BaseModel):
     Post: Post
     votes: int
+    comments: Comment
 
     class Config:
         orm_mode = True
@@ -94,3 +109,5 @@ class TokenData(BaseModel):
 class Vote(BaseModel):
     post_id: int
     dir: conint(le=1)
+
+

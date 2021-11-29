@@ -18,10 +18,13 @@ def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.
 
     # posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
-    posts = db.query(models.Post, func.count(models.Votes.post_id).label("votes")).join(
+    posts = db.query(models.Post, models.Comment, func.count(models.Votes.post_id).label("votes")).join(
+                models.Comment,
+                models.Comment.post_id == models.Post.id
+            ).join(
             models.Votes, 
             models.Votes.post_id == models.Post.id, 
-            isouter=True).group_by(models.Post.id).filter(models.Post.title.contains(search)
+            isouter=True).group_by(models.Post.id).group_by(models.Comment.post_id).filter(models.Post.title.contains(search)
             ).limit(limit).offset(skip).all()
 
     # cursor.execute("""SELECT * FROM posts;""")

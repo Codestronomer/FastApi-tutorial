@@ -21,6 +21,8 @@ class Post(Base):
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"),  nullable=False)
 
     owner = relationship("User", primaryjoin="Post.owner_id == User.id")
+    comments = relationship("Comment", primaryjoin="Post.id == Comment.post_id")
+
 
 class User(Base):
 
