@@ -51,3 +51,4 @@ class Comment(Base):
     user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)
     content = Column(String, nullable=False)
     created = Column(TIMESTAMP, server_default=text('NOW()'), nullable=False)
+    user = relationship('User', backref='comments', lazy=True)

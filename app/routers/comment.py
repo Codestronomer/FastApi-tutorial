@@ -29,9 +29,8 @@ def create_comment(comment: schemas.CommentCreate, db: Session = Depends(get_db)
     return new_comment
 
 
-@router.get('/', response_model=List[schemas.Comment], status_code=status.HTTP_200_OK)
-def get_comments(db: Session = Depends(get_db)):
-
-    comments = db.query(models.Comment).all()
+@router.get('/{id}', response_model=List[schemas.Comment], status_code=status.HTTP_200_OK)
+def get_comments(id: int, db: Session = Depends(get_db)):
+    comments = db.query(models.Comment).filter(models.Comment.post_id == id).all()
 
     return comments

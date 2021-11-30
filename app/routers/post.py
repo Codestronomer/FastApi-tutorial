@@ -6,7 +6,7 @@ from ..db import get_db
 from fastapi import Response, status, HTTPException, Depends, APIRouter
 from typing import List
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, select
 
 
 router = APIRouter(
@@ -16,16 +16,25 @@ router = APIRouter(
 @router.get("/posts", status_code=status.HTTP_200_OK, response_model=List[schemas.PostOut])
 def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user), limit: int = 10, skip: int = 0, search: Optional[str] = ""):
 
-    # posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
+    # # posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
-    posts = db.query(models.Post, models.Comment, func.count(models.Votes.post_id).label("votes")).join(
-                models.Comment,
-                models.Comment.post_id == models.Post.id
-            ).join(
-            models.Votes, 
-            models.Votes.post_id == models.Post.id, 
-            isouter=True).group_by(models.Post.id).group_by(models.Comment.post_id).filter(models.Post.title.contains(search)
+    posts = db.query(models.Post, func.count(models.Votes.post_id).label("votes")).join(
+                models.Votes, 
+                models.Votes.post_id == models.Post.id, 
+                isouter=True).group_by(models.Post.id).filter(models.Post.title.contains(search)
             ).limit(limit).offset(skip).all()
+
+    # query = select([func.count(models.Votes.post_id).label("votes"), models.Post).where(
+    #             models.Votes.post_id == models.Post.id
+    #         ).where(
+    #             models.Comment.post_id == models.Post.id
+    #         ).group_by(models.Post.id, models.Comment.post_id, models.Comment.user_id).order_by(
+    #             models.Post.id.desc()
+    #         )
+
+    # print(query)
+    # posts = db.execute(query).all()
+    
 
     # cursor.execute("""SELECT * FROM posts;""")
     # posts = cursor.fetchall()
