@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, ValidationError
 from datetime import datetime
 from pydantic.networks import EmailStr
@@ -29,6 +29,20 @@ class UserOut(UserBase):
 
     class Config:
         orm_mode = True
+
+
+
+class CommentCreate(BaseModel):
+    post_id: int
+    content: str
+
+
+class Comment(CommentCreate):
+    created: datetime
+
+    class Config:
+        orm_mode = True
+        
 
 class Post(PostBase):
     id: int
@@ -94,3 +108,5 @@ class TokenData(BaseModel):
 class Vote(BaseModel):
     post_id: int
     dir: conint(le=1)
+
+

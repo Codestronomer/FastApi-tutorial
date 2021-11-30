@@ -21,6 +21,8 @@ class Post(Base):
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"),  nullable=False)
 
     owner = relationship("User", primaryjoin="Post.owner_id == User.id")
+    comments = relationship("Comment", primaryjoin="Post.id == Comment.post_id")
+
 
 class User(Base):
 
@@ -39,3 +41,14 @@ class Votes(Base):
     
     user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)
     post_id = Column(Integer, ForeignKey('posts.id', ondelete="CASCADE"), primary_key=True)
+
+
+class Comment(Base):
+
+    __tablename__ = "comments"
+
+    post_id = Column(Integer, ForeignKey('posts.id', ondelete="CASCADE"), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)
+    content = Column(String, nullable=False)
+    created = Column(TIMESTAMP, server_default=text('NOW()'), nullable=False)
+    user = relationship('User', backref='comments', lazy=True)
